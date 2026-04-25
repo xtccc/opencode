@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test"
 import path from "path"
 import { Instance } from "../../src/project/instance"
 import { Server } from "../../src/server/server"
-import { Log } from "../../src/util/log"
+import { Log } from "../../src/util"
 
 const projectRoot = path.join(__dirname, "../..")
 Log.init({ print: false })
@@ -12,7 +12,7 @@ describe("/plugin/input-changed", () => {
     await Instance.provide({
       directory: projectRoot,
       fn: async () => {
-        const app = Server.App()
+        const { app } = Server.Default()
         const response = await app.request("/plugin/input-changed", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -29,7 +29,7 @@ describe("/plugin/input-changed", () => {
     await Instance.provide({
       directory: projectRoot,
       fn: async () => {
-        const app = Server.App()
+        const { app } = Server.Default()
         const response = await app.request("/plugin/input-changed", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -44,7 +44,7 @@ describe("/plugin/input-changed", () => {
     await Instance.provide({
       directory: projectRoot,
       fn: async () => {
-        const app = Server.App()
+        const { app } = Server.Default()
         const response = await app.request("/plugin/input-changed", {
           method: "POST",
           headers: { "Content-Type": "application/json" },

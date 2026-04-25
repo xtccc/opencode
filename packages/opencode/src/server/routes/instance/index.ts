@@ -6,6 +6,7 @@ import z from "zod"
 import { Format } from "@/format"
 import { TuiRoutes } from "./tui"
 import { Instance } from "@/project/instance"
+import { Plugin } from "@/plugin"
 import { Vcs } from "@/project"
 import { Agent } from "@/agent/agent"
 import { Skill } from "@/skill"
@@ -70,6 +71,37 @@ export const InstanceRoutes = (upgrade: UpgradeWebSocket): Hono => {
     .route("/", EventRoutes())
     .route("/mcp", McpRoutes())
     .route("/tui", TuiRoutes())
+    .post(
+      "/plugin/input-changed",
+      describeRoute({
+        tags: ["Plugin"],
+        summary: "Notify plugins of input change",
+        description: "Fires the tui.input.changed hook to notify plugins when TUI input text changes.",
+        operationId: "plugin.inputChanged",
+        responses: {
+          200: {
+            description: "Plugins notified successfully",
+            content: {
+              "application/json": {
+                schema: resolver(z.boolean()),
+              },
+            },
+          },
+        },
+      }),
+      validator(
+        "json",
+        z.object({
+          sessionID: z.string(),
+          text: z.string(),
+        }),
+      ),
+      async (c) => {
+        const { sessionID, text } = c.req.valid("json")
+        await Plugin.trigger("tui.input.changed", { sessionID, text }, {})
+        return c.json(true)
+      },
+    )
     .post(
       "/instance/dispose",
       describeRoute({

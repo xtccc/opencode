@@ -286,4 +286,7 @@ export const layer = Layer.effect(
 
 export const defaultLayer = layer.pipe(Layer.provide(Bus.layer), Layer.provide(Config.defaultLayer))
 
+export const trigger = <T extends TriggerName>(name: T, input: any, output: any) =>
+  Service.use((svc) => svc.trigger(name, input, output)).pipe(Effect.provide(defaultLayer), Effect.runPromise)
+
 export * as Plugin from "."
